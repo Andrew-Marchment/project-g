@@ -1,6 +1,5 @@
 "use client";
 
-import { QUIZ_SIZE } from "@/lib/constants";
 import {
   ReactElement,
   createContext,
@@ -12,17 +11,20 @@ import {
 type StateType = {
   quizInProgress: boolean;
   currentQuestion: number;
+  answers: string[];
 };
 
 export const initialState: StateType = {
   quizInProgress: false,
   currentQuestion: 0,
+  answers: [],
 };
 
 const enum REDUCER_ACTION_TYPE {
   SET_QUIZ_IN_PROGRESS,
   INCREMENT_CURRENT_QUESTION,
   DECREMENT_CURRENT_QUESTION,
+  SET_ANSWERS,
 }
 
 type ReducerAction = {
@@ -38,6 +40,11 @@ const reducer = (state: StateType, action: ReducerAction): StateType => {
       return { ...state, currentQuestion: state.currentQuestion + 1 ?? 0 };
     case REDUCER_ACTION_TYPE.DECREMENT_CURRENT_QUESTION:
       return { ...state, currentQuestion: state.currentQuestion - 1 ?? 0 };
+    case REDUCER_ACTION_TYPE.SET_ANSWERS:
+      if (state.answers[state.currentQuestion])
+        state.answers[state.currentQuestion] = action.payload;
+      else state.answers.push(action.payload);
+      return { ...state };
     default:
       throw new Error("unknown action");
   }
@@ -71,11 +78,21 @@ const useQuizContext = (initialState: StateType) => {
     [],
   );
 
+  const setAnswers = useCallback(
+    (answer: string) =>
+      dispatch({
+        type: REDUCER_ACTION_TYPE.SET_ANSWERS,
+        payload: answer,
+      }),
+    [],
+  );
+
   return {
     state,
     setQuizInProgress,
     incrementCurrentQuestion,
     decrementCurrentQuestion,
+    setAnswers,
   };
 };
 
@@ -86,6 +103,7 @@ const initialContextState: UseQuizContextType = {
   setQuizInProgress: (quizInProgress: boolean) => {},
   incrementCurrentQuestion: () => {},
   decrementCurrentQuestion: () => {},
+  setAnswers: (answer: string) => {},
 };
 
 export const QuizContext =
@@ -109,23 +127,28 @@ export const QuizProvider = ({
 type UseQuizHookType = {
   quizInProgress: boolean;
   currentQuestion: number;
+  answers: string[];
   setQuizInProgress: (quizInProgress: boolean) => void;
   incrementCurrentQuestion: () => void;
   decrementCurrentQuestion: () => void;
+  setAnswers: (answer: string) => void;
 };
 
 export const useQuiz = (): UseQuizHookType => {
   const {
-    state: { quizInProgress, currentQuestion },
+    state: { quizInProgress, currentQuestion, answers },
     setQuizInProgress,
     incrementCurrentQuestion,
     decrementCurrentQuestion,
+    setAnswers,
   } = useContext(QuizContext);
   return {
     quizInProgress,
     currentQuestion,
+    answers,
     setQuizInProgress,
     incrementCurrentQuestion,
     decrementCurrentQuestion,
+    setAnswers,
   };
 };

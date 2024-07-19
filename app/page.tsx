@@ -11,6 +11,7 @@ export default function Home() {
         <QuizProvider
           quizInProgress={initialState.quizInProgress}
           currentQuestion={initialState.currentQuestion}
+          answers={initialState.answers}
         >
           <QuizContainer />
         </QuizProvider>

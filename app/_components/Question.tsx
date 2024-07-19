@@ -1,6 +1,9 @@
+"use client";
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useQuiz } from "../context/QuizContext";
+import { Dispatch, SetStateAction, useState } from "react";
 
 type QuestionType = {
   question: string;
@@ -9,10 +12,12 @@ type QuestionType = {
 
 interface QuestionProps {
   question: QuestionType;
+  answer: string;
+  setAnswer: Dispatch<SetStateAction<string>>;
 }
 
-function Question({ question }: QuestionProps) {
-  const { currentQuestion } = useQuiz();
+function Question({ question, answer, setAnswer }: QuestionProps) {
+  const { currentQuestion, answers, setAnswers } = useQuiz();
 
   return (
     <div className="text-left">
@@ -24,6 +29,8 @@ function Question({ question }: QuestionProps) {
         className="mt-2"
         type="text"
         placeholder={question.placeholder}
+        value={answer}
+        onChange={(e) => setAnswer(e.target.value)}
       />
     </div>
   );

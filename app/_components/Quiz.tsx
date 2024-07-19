@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Card,
   CardContent,
@@ -11,15 +13,20 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useQuiz } from "../context/QuizContext";
 import { QUIZ_SIZE } from "@/lib/constants";
+import { useState } from "react";
 
 function Quiz() {
+  const [answer, setAnswer] = useState("");
+
   const {
     currentQuestion,
+    answers,
     incrementCurrentQuestion,
     decrementCurrentQuestion,
+    setAnswers,
   } = useQuiz();
 
-  const progress = ((currentQuestion + 1) / (QUIZ_SIZE + 1)) * 100;
+  const progress = (currentQuestion / (QUIZ_SIZE + 1)) * 100;
 
   const questions = [
     {
@@ -48,6 +55,20 @@ function Quiz() {
     },
   ];
 
+  function handlePreviousQuestion() {
+    setAnswer(answers[currentQuestion - 1]);
+    if (answer !== "") setAnswers(answer);
+    decrementCurrentQuestion();
+  }
+
+  function handleNextQuestion() {
+    setAnswers(answer);
+    incrementCurrentQuestion();
+    answers[currentQuestion + 1]
+      ? setAnswer(answers[currentQuestion + 1])
+      : setAnswer("");
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -59,20 +80,30 @@ function Quiz() {
       </CardHeader>
       <CardContent>
         <Progress className="mb-6" value={progress} />
-        <Question question={questions[currentQuestion]} />
+        <Question
+          question={questions[currentQuestion]}
+          answer={answer}
+          setAnswer={setAnswer}
+        />
       </CardContent>
       <CardFooter
         className={`justify-between ${currentQuestion === 0 ? "flex-row-reverse" : ""}`}
       >
         {currentQuestion > 0 && (
-          <Button variant="outline" onClick={decrementCurrentQuestion}>
+          <Button variant="outline" onClick={handlePreviousQuestion}>
             Previous question
           </Button>
         )}
         {currentQuestion < QUIZ_SIZE ? (
-          <Button onClick={incrementCurrentQuestion}>Next question</Button>
+          <Button onClick={handleNextQuestion}>Next question</Button>
         ) : (
-          <Button onClick={() => {}}>Generate gift ideas</Button>
+          <Button
+            onClick={() => {
+              if (currentQuestion < QUIZ_SIZE + 1) incrementCurrentQuestion;
+            }}
+          >
+            Generate gift ideas
+          </Button>
         )}
       </CardFooter>
     </Card>
