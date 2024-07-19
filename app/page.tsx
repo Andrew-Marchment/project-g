@@ -1,10 +1,20 @@
-import { Button } from "@/components/ui/button";
+"use client";
+
+import QuizContainer from "./_components/QuizContainer";
+import { initialState, QuizProvider } from "./context/QuizContext";
 
 export default function Home() {
   return (
-    <main>
-      <h1>PROJECT G</h1>
-      <Button>Click me</Button>
+    <main className="m-0 flex min-h-screen bg-background text-foreground">
+      <div className="mx-auto text-center">
+        <h1 className="mb-10 text-3xl">PROJECT G</h1>
+        <QuizProvider
+          quizInProgress={initialState.quizInProgress}
+          currentQuestion={initialState.currentQuestion}
+        >
+          <QuizContainer />
+        </QuizProvider>
+      </div>
     </main>
   );
 }
