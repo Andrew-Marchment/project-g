@@ -17,7 +17,7 @@ interface QuestionProps {
 }
 
 function Question({ question, answer, setAnswer }: QuestionProps) {
-  const { currentQuestion, answers, setAnswers } = useQuiz();
+  const { currentQuestion, quizComplete } = useQuiz();
 
   return (
     <div className="text-left">
@@ -29,6 +29,7 @@ function Question({ question, answer, setAnswer }: QuestionProps) {
         className="mt-2"
         type="text"
         placeholder={question.placeholder}
+        disabled={quizComplete}
         value={answer}
         onChange={(e) => setAnswer(e.target.value)}
       />

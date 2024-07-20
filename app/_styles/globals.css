@@ -58,3 +58,35 @@
     --chart-5: 340 75% 55%;
   }
 }
+
+@layer components {
+  .spinner {
+    margin: 3.2rem auto 1.6rem;
+    width: 60px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 8px solid theme("colors.background");
+    border-right-color: theme("colors.foreground");
+    animation: rotate 1s infinite linear;
+  }
+
+  .spinner-mini {
+    margin: 0;
+    width: 20px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 2px solid theme("colors.primary-foreground");
+    border-right-color: transparent;
+    animation: rotate 1s infinite linear;
+  }
+
+  .rotate {
+    animation: rotate 1s infinite linear;
+  }
+
+  @keyframes rotate {
+    to {
+      transform: rotate(-1turn);
+    }
+  }
+}

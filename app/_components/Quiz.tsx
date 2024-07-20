@@ -14,17 +14,30 @@ import { Progress } from "@/components/ui/progress";
 import { useQuiz } from "../context/QuizContext";
 import { QUIZ_SIZE } from "@/lib/constants";
 import { useState } from "react";
+import { useChat } from "ai/react";
+import SpinnerMini from "./SpinnerMini";
 
 function Quiz() {
   const [answer, setAnswer] = useState("");
+  const [displayFieldRequiredText, setDisplayFieldRequiredText] =
+    useState(false);
 
   const {
     currentQuestion,
     answers,
+    quizComplete,
     incrementCurrentQuestion,
     decrementCurrentQuestion,
     setAnswers,
+    setQuizComplete,
   } = useQuiz();
+
+  const { append, isLoading } = useChat({
+    api: "/api/gpt",
+    onFinish: (message) => {
+      console.log(message);
+    },
+  });
 
   const progress = (currentQuestion / (QUIZ_SIZE + 1)) * 100;
 
@@ -62,11 +75,28 @@ function Quiz() {
   }
 
   function handleNextQuestion() {
+    if (answer === "") {
+      setDisplayFieldRequiredText(true);
+    }
+    // else {
     setAnswers(answer);
     incrementCurrentQuestion();
     answers[currentQuestion + 1]
       ? setAnswer(answers[currentQuestion + 1])
       : setAnswer("");
+    setDisplayFieldRequiredText(false);
+    // }
+  }
+
+  function handleGenerateGiftIdeas() {
+    setQuizComplete();
+    console.log(
+      `Curate 4 gift ideas based on the answers to the following questions:${questions.map((question) => ` ${question.question}`)}. Here are the answers given: ${answers}`,
+    );
+    // append({
+    //   role: "system",
+    //   content: `Curate 4 gift ideas based on the answers to the following questions:${questions.map((question) => ` ${question.question}`)}. Here are the answers given: ${answers}`,
+    // });
   }
 
   return (
@@ -79,18 +109,27 @@ function Quiz() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Progress className="mb-6" value={progress} />
+        <Progress className="mb-6" value={!quizComplete ? progress : 100} />
         <Question
           question={questions[currentQuestion]}
           answer={answer}
           setAnswer={setAnswer}
         />
+        {displayFieldRequiredText && (
+          <p className="mt-1 text-start text-sm text-red-600">
+            Please provide an answer to the above question.
+          </p>
+        )}
       </CardContent>
       <CardFooter
         className={`justify-between ${currentQuestion === 0 ? "flex-row-reverse" : ""}`}
       >
         {currentQuestion > 0 && (
-          <Button variant="outline" onClick={handlePreviousQuestion}>
+          <Button
+            variant="outline"
+            onClick={handlePreviousQuestion}
+            disabled={quizComplete}
+          >
             Previous question
           </Button>
         )}
@@ -98,11 +137,11 @@ function Quiz() {
           <Button onClick={handleNextQuestion}>Next question</Button>
         ) : (
           <Button
-            onClick={() => {
-              if (currentQuestion < QUIZ_SIZE + 1) incrementCurrentQuestion;
-            }}
+            className="min-w-40"
+            onClick={handleGenerateGiftIdeas}
+            disabled={isLoading}
           >
-            Generate gift ideas
+            {isLoading ? <SpinnerMini /> : "Generate gift ideas"}
           </Button>
         )}
       </CardFooter>

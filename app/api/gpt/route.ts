@@ -15,13 +15,13 @@ export async function POST(req: Request, res: Response) {
 
   // Ask OpenAI for a streaming chat completion given the prompt
   const response = await openai.chat.completions.create({
-    model: "gpt-4-1106-preview",
+    model: "gpt-4o-mini",
     messages: [
       {
         role: "system",
-        content: `I want you to act as a company name generator for startup companies.
-        I will provide you with a description of the company, and you will generate four attention-grabbing company names. Please keep the company names concise and under 5 words, and ensure that the meaning is maintained. Separate all words with a space. Do not use pascal case for the company names. The company names must be unique and must not be names of companies that already exist.
-        Your responsibility is to come up with four attention-grabbing company names that align with the company description.`,
+        content: `I want you to act as an expert gift ideas curator.
+        I will provide you with some information about a person, and you will generate four relevant, personalized gift ideas for that person. Please ensure that any gift ideas you provide are available for purchase on amazon for under $50.
+        Your responsibility is to curate four creative, personalized gift ideas, perfect for the person whom you have been provided with information about.`,
       },
       ...messages,
     ],
