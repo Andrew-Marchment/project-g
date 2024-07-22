@@ -13,6 +13,7 @@ type StateType = {
   currentQuestion: number;
   answers: string[];
   quizComplete: boolean;
+  giftIdeas: string[];
 };
 
 export const initialState: StateType = {
@@ -20,6 +21,7 @@ export const initialState: StateType = {
   currentQuestion: 0,
   answers: [],
   quizComplete: false,
+  giftIdeas: [],
 };
 
 const enum REDUCER_ACTION_TYPE {
@@ -28,6 +30,8 @@ const enum REDUCER_ACTION_TYPE {
   DECREMENT_CURRENT_QUESTION,
   SET_ANSWERS,
   SET_QUIZ_COMPLETE,
+  SET_GIFT_IDEAS,
+  RESTART_QUIZ,
 }
 
 type ReducerAction = {
@@ -50,6 +54,18 @@ const reducer = (state: StateType, action: ReducerAction): StateType => {
       return { ...state };
     case REDUCER_ACTION_TYPE.SET_QUIZ_COMPLETE:
       return { ...state, quizComplete: true };
+    case REDUCER_ACTION_TYPE.SET_GIFT_IDEAS:
+      return { ...state, giftIdeas: action.payload };
+    case REDUCER_ACTION_TYPE.RESTART_QUIZ:
+      return {
+        ...state,
+        quizInProgress: true,
+        currentQuestion: initialState.currentQuestion,
+        // answers: initialState.answers,
+        answers: [],
+        quizComplete: initialState.quizComplete,
+        giftIdeas: initialState.giftIdeas,
+      };
     default:
       throw new Error("unknown action");
   }
@@ -100,6 +116,23 @@ const useQuizContext = (initialState: StateType) => {
     [],
   );
 
+  const setGiftIdeas = useCallback(
+    (giftIdeas: string[]) =>
+      dispatch({
+        type: REDUCER_ACTION_TYPE.SET_GIFT_IDEAS,
+        payload: giftIdeas,
+      }),
+    [],
+  );
+
+  const restartQuiz = useCallback(
+    () =>
+      dispatch({
+        type: REDUCER_ACTION_TYPE.RESTART_QUIZ,
+      }),
+    [],
+  );
+
   return {
     state,
     setQuizInProgress,
@@ -107,6 +140,8 @@ const useQuizContext = (initialState: StateType) => {
     decrementCurrentQuestion,
     setAnswers,
     setQuizComplete,
+    setGiftIdeas,
+    restartQuiz,
   };
 };
 
@@ -119,6 +154,8 @@ const initialContextState: UseQuizContextType = {
   decrementCurrentQuestion: () => {},
   setAnswers: (answer: string) => {},
   setQuizComplete: () => {},
+  setGiftIdeas: (giftIdeas: string[]) => {},
+  restartQuiz: () => {},
 };
 
 export const QuizContext =
@@ -144,31 +181,45 @@ type UseQuizHookType = {
   currentQuestion: number;
   answers: string[];
   quizComplete: boolean;
+  giftIdeas: string[];
   setQuizInProgress: (quizInProgress: boolean) => void;
   incrementCurrentQuestion: () => void;
   decrementCurrentQuestion: () => void;
   setAnswers: (answer: string) => void;
   setQuizComplete: () => void;
+  setGiftIdeas: (giftIdeas: string[]) => void;
+  restartQuiz: () => void;
 };
 
 export const useQuiz = (): UseQuizHookType => {
   const {
-    state: { quizInProgress, currentQuestion, answers, quizComplete },
+    state: {
+      quizInProgress,
+      currentQuestion,
+      answers,
+      quizComplete,
+      giftIdeas,
+    },
     setQuizInProgress,
     incrementCurrentQuestion,
     decrementCurrentQuestion,
     setAnswers,
     setQuizComplete,
+    setGiftIdeas,
+    restartQuiz,
   } = useContext(QuizContext);
   return {
     quizInProgress,
     currentQuestion,
     answers,
     quizComplete,
+    giftIdeas,
     setQuizInProgress,
     incrementCurrentQuestion,
     decrementCurrentQuestion,
     setAnswers,
     setQuizComplete,
+    setGiftIdeas,
+    restartQuiz,
   };
 };
