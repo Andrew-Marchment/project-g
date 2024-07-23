@@ -1,9 +1,10 @@
+import "@/app/_styles/globals.css";
 import type { Metadata } from "next";
 import { Inter as FontSans } from "next/font/google";
-import "@/app/_styles/globals.css";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { ModeToggle } from "@/components/ui/ModeToggle";
+import { Analytics } from "@vercel/analytics/react";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -38,6 +39,7 @@ export default function RootLayout({
             <ModeToggle />
           </div>
           {children}
+          <Analytics />
         </ThemeProvider>
       </body>
     </html>

@@ -19,11 +19,13 @@ import { QUIZ_SIZE } from "@/lib/constants";
 import { questions } from "@/lib/questions";
 import { RefreshCcw } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import Image from "next/image";
 
 function Quiz() {
   const [answer, setAnswer] = useState("");
   const [displayFieldRequiredText, setDisplayFieldRequiredText] =
     useState(false);
+  const [error, setError] = useState("");
 
   const {
     currentQuestion,
@@ -41,13 +43,18 @@ function Quiz() {
   const { append, isLoading } = useChat({
     api: "/api/gpt",
     onFinish: (message) => {
+      setError("");
       console.log(message);
       const giftIdeas = message.content
+        .replace("- ", "")
+        .replace(".", "")
         .replaceAll("\n", "")
-        .replaceAll("- ", "")
-        .split(", ");
-      console.log(giftIdeas);
+        .split(",  - ");
+
       setGiftIdeas(giftIdeas);
+    },
+    onError: (error) => {
+      setError(`An error occured calling the OpenAI API: ${error}`);
     },
   });
 
@@ -73,11 +80,16 @@ function Quiz() {
   }
 
   function handleGenerateGiftIdeas() {
-    setQuizComplete();
-    append({
-      role: "system",
-      content: `Create an unordered list of four gift ideas, separated by commas with no dash at the start, based on the answers to the following questions:${questions.map((question) => ` ${question.question}`)}. Here are the answers given: ${answers},${answer}`,
-    });
+    if (answer === "") {
+      setDisplayFieldRequiredText(true);
+    } else {
+      setQuizComplete();
+      append({
+        role: "system",
+        content: `Create an unordered list of four gift ideas, separated by commas with no dash at the start, based on the answers to the following questions:${questions.map((question) => ` ${question.question}`)}. Here are the answers given: ${answers},${answer}`,
+      });
+      setDisplayFieldRequiredText(false);
+    }
   }
 
   function handleRestartQuiz() {
@@ -86,14 +98,21 @@ function Quiz() {
   }
 
   return (
-    <>
+    <div className="relative">
+      <Image
+        src="/Gift Guide Wizard.png"
+        alt="The Gift Guide"
+        width={300}
+        height={400}
+        className="absolute right-[-300px]"
+      />
       {giftIdeas.length === 0 ? (
         <Card>
           <CardHeader>
-            <CardTitle>Gift Ideas Quiz</CardTitle>
+            <CardTitle>Provide the guide with information</CardTitle>
             <CardDescription>
-              Answer the following questions about the person you&apos;re buying
-              for.
+              Answer the guide&apos;s questions about the person you&apos;re
+              buying for.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -104,8 +123,8 @@ function Quiz() {
               setAnswer={setAnswer}
             />
             {displayFieldRequiredText && (
-              <p className="mt-1 text-start text-sm text-red-600">
-                Please provide an answer to the above question.
+              <p className="mt-1 text-start text-sm text-destructive">
+                Please answer the guide&apos;s question.
               </p>
             )}
           </CardContent>
@@ -118,18 +137,18 @@ function Quiz() {
                 onClick={handlePreviousQuestion}
                 disabled={quizComplete}
               >
-                Previous question
+                Go back
               </Button>
             )}
             {currentQuestion < QUIZ_SIZE ? (
-              <Button onClick={handleNextQuestion}>Next question</Button>
+              <Button onClick={handleNextQuestion}>Continue</Button>
             ) : (
               <Button
-                className="min-w-40"
+                className="min-w-56"
                 onClick={handleGenerateGiftIdeas}
                 disabled={isLoading}
               >
-                {isLoading ? <SpinnerMini /> : "Generate gift ideas"}
+                {isLoading ? <SpinnerMini /> : "See what the guide has to say"}
               </Button>
             )}
           </CardFooter>
@@ -137,9 +156,9 @@ function Quiz() {
       ) : (
         <Card>
           <CardHeader>
-            <CardTitle>Gift ideas</CardTitle>
+            <CardTitle>The guide has spoken</CardTitle>
             <CardDescription>
-              Below are four personalized gift ideas for you
+              Here are is personal recommendations of gifts.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -163,7 +182,8 @@ function Quiz() {
           </CardFooter>
         </Card>
       )}
-    </>
+      {error && <p className="mt-2 w-full text-destructive">{error}</p>}
+    </div>
   );
 }
 
