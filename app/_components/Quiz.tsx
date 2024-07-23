@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import Question from "./Question";
 import SpinnerMini from "./SpinnerMini";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useState } from "react";
@@ -19,7 +20,6 @@ import { QUIZ_SIZE } from "@/lib/constants";
 import { questions } from "@/lib/questions";
 import { RefreshCcw } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import Image from "next/image";
 
 function Quiz() {
   const [answer, setAnswer] = useState("");
@@ -104,18 +104,20 @@ function Quiz() {
         alt="The Gift Guide"
         width={300}
         height={400}
-        className="absolute right-[-300px]"
+        className="absolute right-[-300px] sm:static sm:right-0 sm:m-auto"
       />
       {giftIdeas.length === 0 ? (
         <Card>
-          <CardHeader>
-            <CardTitle>Provide the guide with information</CardTitle>
-            <CardDescription>
+          <CardHeader className="sm:p-4">
+            <CardTitle className="sm:text-xl">
+              Provide the guide with information
+            </CardTitle>
+            <CardDescription className="sm:text-xs">
               Answer the guide&apos;s questions about the person you&apos;re
               buying for.
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="sm:p-4">
             <Progress className="mb-6" value={!quizComplete ? progress : 100} />
             <Question
               question={questions[currentQuestion]}
@@ -123,13 +125,13 @@ function Quiz() {
               setAnswer={setAnswer}
             />
             {displayFieldRequiredText && (
-              <p className="mt-1 text-start text-sm text-destructive">
+              <p className="mt-1 text-start text-sm text-destructive sm:text-xs">
                 Please answer the guide&apos;s question.
               </p>
             )}
           </CardContent>
           <CardFooter
-            className={`justify-between ${currentQuestion === 0 ? "flex-row-reverse" : ""}`}
+            className={`justify-between sm:p-4 ${currentQuestion === 0 ? "flex-row-reverse" : ""}`}
           >
             {currentQuestion > 0 && (
               <Button

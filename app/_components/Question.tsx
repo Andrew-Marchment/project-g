@@ -21,12 +21,12 @@ function Question({ question, answer, setAnswer }: QuestionProps) {
 
   return (
     <div className="text-left">
-      <Label htmlFor={`question-${currentQuestion + 1}`}>
+      <Label htmlFor={`question-${currentQuestion + 1}`} className="sm:text-xs">
         {question.question}
       </Label>
       <Input
         id={`question-${currentQuestion + 1}`}
-        className="mt-2"
+        className="mt-2 sm:text-xs"
         type="text"
         placeholder={question.placeholder}
         disabled={quizComplete}

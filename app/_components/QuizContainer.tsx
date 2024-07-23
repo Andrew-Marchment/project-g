@@ -21,7 +21,7 @@ function QuizContainer() {
             height={400}
             className="mx-auto mb-6"
           />
-          <p className="mb-6 max-w-lg">
+          <p className="mb-4 max-w-lg p-2 sm:text-xs">
             Answer the guide&apos;s five questions about the person you are
             buying a gift for, and he will provide you with personalized gift
             ideas.
