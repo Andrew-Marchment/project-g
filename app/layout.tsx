@@ -29,18 +29,18 @@ export default function RootLayout({
           fontSans.variable,
         )}
       >
-        <ThemeProvider
+        {/* <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
-        >
-          <div className="fixed right-2 top-2">
+        > */}
+        {/* <div className="fixed right-2 top-2 z-10">
             <ModeToggle />
-          </div>
-          {children}
-          <Analytics />
-        </ThemeProvider>
+          </div> */}
+        {children}
+        <Analytics />
+        {/* </ThemeProvider> */}
       </body>
     </html>
   );

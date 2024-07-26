@@ -104,7 +104,7 @@ function Quiz() {
         alt="The Gift Guide"
         width={300}
         height={400}
-        className="absolute right-[-300px] sm:static sm:right-0 sm:m-auto"
+        className="absolute right-[-300px] lg:right-[-12rem] lg:max-w-48 md:static md:right-0 md:m-auto md:max-w-60"
       />
       {giftIdeas.length === 0 ? (
         <Card>
