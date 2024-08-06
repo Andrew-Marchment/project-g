@@ -56,6 +56,8 @@ const config = {
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         radius: "hsl(var(--radius))",
+        "foreground-dark": "hsl(var(--foreground-dark))",
+        "foreground-light": "hsl(var(--foreground-light))",
       },
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
